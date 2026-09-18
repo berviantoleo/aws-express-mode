@@ -1,39 +1,40 @@
 name: Deploy
 
 on:
-	push:
-		branches:
-			- main
-	workflow_dispatch:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 env:
-	REGISTRY: ghcr.io
-	IMAGE_NAME: ${{ github.repository }}/apisample
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/apisample
 
 jobs:
-	publish:
-		name: Publish ApiSample image
-		runs-on: ubuntu-latest
-		permissions:
-			contents: read
-			packages: write
-		steps:
-			- name: Check out source
-				uses: actions/checkout@v4
 
-			- name: Log in to GitHub Container Registry
-				uses: docker/login-action@v3
-				with:
-					registry: ${{ env.REGISTRY }}
-					username: ${{ github.actor }}
-					password: ${{ secrets.GITHUB_TOKEN }}
+  publish:
+    name: Publish ApiSample image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
 
-			- name: Build and push ApiSample
-				uses: docker/build-push-action@v6
-				with:
-					context: ./ApiSample
-					push: true
-					tags: |
-						${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-						${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ApiSample
+        run: >-
+          dotnet publish ./ApiSample/ApiSample.csproj
+          --configuration Release
+          /t:PublishContainer
+          -p:ContainerRegistry=${{ env.REGISTRY }}
+          -p:ContainerRepository=${{ env.IMAGE_NAME }}
+          -p:ContainerImageTags="${{ github.sha }}%3Blatest"
 
