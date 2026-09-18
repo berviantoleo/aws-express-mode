@@ -36,5 +36,5 @@ jobs:
           /t:PublishContainer
           -p:ContainerRegistry=${{ env.REGISTRY }}
           -p:ContainerRepository=${{ env.IMAGE_NAME }}
-          -p:ContainerImageTags="${{ github.sha }}%3Blatest"
+          -p:ContainerImageTags='"${{ github.sha }};latest"'
 
