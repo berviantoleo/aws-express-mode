@@ -67,7 +67,7 @@ resource "aws_ecs_express_gateway_service" "apisample" {
 
   primary_container {
     container_port = 8080
-    image = "ghcr.io/berviantoleo/aws-express-mode/apisample:latest"
+    image          = "ghcr.io/berviantoleo/aws-express-mode/apisample:latest"
   }
 
   depends_on = [
