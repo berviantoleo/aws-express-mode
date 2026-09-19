@@ -50,6 +50,7 @@ resource "aws_iam_role" "infrastructure" {
       },
     ]
   })
+
 }
 
 resource "aws_iam_role_policy_attachment" "infrastructure" {
@@ -73,6 +74,8 @@ resource "aws_ecs_express_gateway_service" "apisample" {
   depends_on = [
     aws_iam_role.execution,
     aws_iam_role.infrastructure,
+    aws_iam_role_policy_attachment.execution,
+    aws_iam_role_policy_attachment.infrastructure,
   ]
 }
 
